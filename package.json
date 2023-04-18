@@ -15,7 +15,8 @@
     "start": "tsc && node ./dist/index.js",
     "dev": "tsc --watch && node ./dist/index.js",
     "test": "vitest",
-    "coverage": "vitest --coverage --run",
+    "test:ci": "vitest --run",
+    "test:coverage": "vitest --coverage --run",
     "lint": "eslint "
   },
   "dependencies": {

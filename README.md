@@ -1,3 +1,5 @@
+[![Test](https://github.com/jrollin/ts-zod/actions/workflows/test.yml/badge.svg)](https://github.com/jrollin/ts-zod/actions/workflows/test.yml)
+
 ![Zod logo](./zod.png)
 
 # Typescript + Eslint + Zod

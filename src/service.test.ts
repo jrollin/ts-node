@@ -7,7 +7,7 @@ fetchMock.enableMocks();
 
 describe("Service Nobel", () => {
     beforeEach(() => {
-        fetch.resetMocks();
+        fetchMock.resetMocks();
     });
 
     it("Expect to receive a Nobel Prizes list", async () => {
@@ -28,14 +28,14 @@ describe("Service Nobel", () => {
                 },
             ],
         };
-        fetch.mockResponseOnce(JSON.stringify(body));
+        fetchMock.mockResponseOnce(JSON.stringify(body));
         const prizes = await getNobelPrizes();
         expect(prizes).toHaveLength(1);
     });
 
     it("Expect error if wrong data received", async () => {
         const body = { invalid: "key" };
-        fetch.mockResponseOnce(JSON.stringify(body));
+        fetchMock.mockResponseOnce(JSON.stringify(body));
         await expect(getNobelPrizes).rejects.toThrowError();
     });
 });
