@@ -1,0 +1,14 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "sourceMap": true,
+    "outDir": "dist",
+    // Recommended: Compiler complains about expressions implicitly typed as 'any'
+    "noImplicitAny": false,
+    // TypeScript support for import.meta.vitest
+    "types": ["vitest/importMeta"]
+  },
+  "include": ["src"], // which files to compile
+  "exclude": ["node_modules"] // which files to skip
+}
