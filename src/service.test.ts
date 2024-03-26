@@ -1,41 +1,51 @@
-import createFetchMock from "vitest-fetch-mock";
-import { vi, expect, describe, beforeEach, it } from "vitest";
+import { vi, expect, describe, it, afterAll } from "vitest";
 import { getNobelPrizes } from "./service";
 
-const fetchMock = createFetchMock(vi);
-fetchMock.enableMocks();
-
 describe("Service Nobel", () => {
-    beforeEach(() => {
-        fetchMock.resetMocks();
-    });
+  const fetchSpy = vi.spyOn(global, "fetch");
 
-    it("Expect to receive a Nobel Prizes list", async () => {
-        const body = {
-            prizes: [
-                {
-                    year: "2022",
-                    category: "literature",
-                    laureates: [
-                        {
-                            id: "1017",
-                            firstname: "Annie",
-                            surname: "Ernaux",
-                            motivation:
-                                "for the courage and clinical acuity with which she uncovers the roots, estrangements and  collective restraints of personal memory",
-                        },
-                    ],
-                },
-            ],
-        };
-        fetchMock.mockResponseOnce(JSON.stringify(body));
-        const prizes = await getNobelPrizes();
-        expect(prizes).toHaveLength(1);
-    });
+  it("Expect to receive a Nobel Prizes list", async () => {
+    const body = {
+      prizes: [
+        {
+          year: "2022",
+          category: "literature",
+          laureates: [
+            {
+              id: "1017",
+              firstname: "Annie",
+              surname: "Ernaux",
+              motivation:
+                "for the courage and clinical acuity with which she uncovers the roots, estrangements and  collective restraints of personal memory",
+            },
+          ],
+        },
+      ],
+    };
+    const mockedImplementation = () =>
+      Promise.resolve({
+        json() {
+          return body;
+        },
+      });
+    fetchSpy.mockImplementation(mockedImplementation);
+    const prizes = await getNobelPrizes();
+    expect(prizes).toHaveLength(1);
+  });
 
-    it("Expect error if wrong data received", async () => {
-        const body = { invalid: "key" };
-        fetchMock.mockResponseOnce(JSON.stringify(body));
-        await expect(getNobelPrizes).rejects.toThrowError();
-    });
+  it("Expect error if wrong data received", async () => {
+    const body = { invalid: "key" };
+    const mockedImplementation = () =>
+      Promise.resolve({
+        json() {
+          return body;
+        },
+      });
+    fetchSpy.mockImplementation(mockedImplementation);
+    await expect(getNobelPrizes).rejects.toThrowError();
+  });
+
+  afterAll(() => {
+    fetchSpy.mockRestore();
+  });
 });
