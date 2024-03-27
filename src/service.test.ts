@@ -1,9 +1,13 @@
-import { vi, expect, describe, it, afterAll } from "vitest";
+import { mockFetch } from "fetch-mocked";
+import { vi, expect, describe, it, afterEach } from "vitest";
 import { getNobelPrizes } from "./service";
 
-describe("Service Nobel", () => {
-  const fetchSpy = vi.spyOn(global, "fetch");
+let mockedFetch = mockFetch(vi.fn);
 
+describe("Service Nobel", () => {
+  afterEach(() => {
+    mockedFetch.mockReset();
+  });
   it("Expect to receive a Nobel Prizes list", async () => {
     const body = {
       prizes: [
@@ -22,30 +26,16 @@ describe("Service Nobel", () => {
         },
       ],
     };
-    const mockedImplementation = () =>
-      Promise.resolve({
-        json() {
-          return body;
-        },
-      });
-    fetchSpy.mockImplementation(mockedImplementation);
+    mockedFetch.mockRequest("https://api.nobelprize.org/v1/prize.json", {
+      body,
+    });
     const prizes = await getNobelPrizes();
     expect(prizes).toHaveLength(1);
   });
 
   it("Expect error if wrong data received", async () => {
     const body = { invalid: "key" };
-    const mockedImplementation = () =>
-      Promise.resolve({
-        json() {
-          return body;
-        },
-      });
-    fetchSpy.mockImplementation(mockedImplementation);
+    mockedFetch.mockRequest("*", { body });
     await expect(getNobelPrizes).rejects.toThrowError();
-  });
-
-  afterAll(() => {
-    fetchSpy.mockRestore();
   });
 });
